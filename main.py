@@ -849,21 +849,21 @@ if __name__ == "__main__":
             raise
     if not opt.no_test and not trainer.interrupted:
         trainer.test(model, data)
-except Exception:
-    if opt.debug and trainer.global_rank == 0:
-        try:
-            import pudb as debugger
-        except ImportError:
-            import pdb as debugger
-        debugger.post_mortem()
-    raise
-finally:
-    # move newly created debug project to debug_runs
-    if opt.debug and not opt.resume and trainer.global_rank == 0:
-        dst, name = os.path.split(logdir)
-        dst = os.path.join(dst, "debug_runs", name)
-        os.makedirs(os.path.split(dst)[0], exist_ok=True)
-        os.rename(logdir, dst)
-    if trainer.global_rank == 0:
+    except Exception:
+        if opt.debug and trainer.global_rank == 0:
+            try:
+                import pudb as debugger
+            except ImportError:
+                import pdb as debugger
+            debugger.post_mortem()
+        raise
+    finally:
+        # move newly created debug project to debug_runs
+        if opt.debug and not opt.resume and trainer.global_rank == 0:
+            dst, name = os.path.split(logdir)
+            dst = os.path.join(dst, "debug_runs", name)
+            os.makedirs(os.path.split(dst)[0], exist_ok=True)
+            os.rename(logdir, dst)
+        if trainer.global_rank == 0:
+            print(trainer.profiler.summary())
         print(trainer.profiler.summary())
-    print(trainer.profiler.summary())
