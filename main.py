@@ -22,8 +22,7 @@ from ldm.data.base import Txt2ImgIterableBaseDataset
 from ldm.util import instantiate_from_config
 
 
-import os
-os.environ["PL_TORCH_DISTRIBUTED_BACKEND"] = "gloo"
+
 
 def load_model_from_config(config, ckpt, verbose=False):
     sd = torch.load(ckpt, map_location="cpu")["state_dict"]
@@ -518,6 +517,8 @@ class ModeSwapCallback(Callback):
             trainer.optimizers = [pl_module.configure_opt_model()]
             
 if __name__ == "__main__":
+    import os
+    os.environ["PL_TORCH_DISTRIBUTED_BACKEND"] = "gloo"
     # custom parser to specify config files, train, test and debug mode,
     # postfix, resume.
     # `--key value` arguments are interpreted as arguments to the trainer.
